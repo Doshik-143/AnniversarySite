@@ -10,6 +10,7 @@ import {
   Trophy,
 } from "lucide-react";
 import "./App.css";
+import MemoryQuest from "./components/MemoryQuest";
 
 const targets = [
   { id: 1, x: 15, y: 23 },
@@ -26,6 +27,8 @@ function App() {
   const [entered, setEntered] = useState(false);
   const [questStarted, setQuestStarted] = useState(false);
   const [collected, setCollected] = useState<number[]>([]);
+
+  const [memoryQuest, setMemoryQuest] = useState(false);
 
   const won = collected.length >= REQUIRED_HEARTS;
 
@@ -303,6 +306,16 @@ function App() {
                     ПОЧАТИ ЗАНОВО
                   </button>
                 </>
+              ) : memoryQuest ? (
+                <MemoryQuest
+                  onComplete={() => {
+                    setMemoryQuest(false);
+                    setQuestStarted(false);
+                    setEntered(false);
+                    setStarted(false);
+                    setCollected([]);
+                  }}
+                />
               ) : (
                 <motion.div
                   className="victory-screen"
@@ -331,14 +344,9 @@ function App() {
 
                   <button
                     className="start-button"
-                    onClick={() => {
-                      setQuestStarted(false);
-                      setEntered(false);
-                      setStarted(false);
-                      setCollected([]);
-                    }}
+                    onClick={() => setMemoryQuest(true)}
                   >
-                    <span>ПЕРЕГЛЯНУТИ ЩЕ РАЗ</span>
+                    <span>ВІДКРИТИ АРХІВ СПОГАДІВ</span>
                     <ArrowRight size={18} />
                   </button>
 
