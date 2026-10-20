@@ -95,7 +95,7 @@ function App() {
               <p className="hero-description">
                 {started
                   ? "Систему активовано. Ця історія створена спеціально для тебе."
-                  : "Деякі історії неможливо описати одним повідомленням. Тому я створила дещо особливе."}
+                  : "Некоторые истории невозможно описать одним сообщением. Поэтому я создала кое-что особенное♥♥♥"}
               </p>
 
               <div className="terminal-window">
@@ -141,8 +141,8 @@ function App() {
               >
                 <span>
                   {started
-                    ? "ВІДКРИТИ ІСТОРІЮ"
-                    : "ІНІЦІАЛІЗУВАТИ LOVE.exe"}
+                    ? "ОТКРЫТЬ СЕКРЕТНЫЙ ФАЙЛ"
+                    : "ЗАПУСК LOVE.exe"}
                 </span>
                 <ArrowRight size={18} />
               </button>
@@ -164,9 +164,9 @@ function App() {
             >
               <Heart className="big-heart" size={48} />
               <p className="eyebrow">ACCESS GRANTED</p>
-              <h2>Привіт, коханий.</h2>
+              <h2>Привет, мой любимый котёнок)))</h2>
               <p className="hero-description">
-                Шість років нашої історії — і це ще далеко не фінал.
+                Шесть лет нашей истории — и это еще далеко не финал.
               </p>
 
               <div className="coming-soon">
@@ -178,7 +178,7 @@ function App() {
                 className="start-button quest-launch"
                 onClick={() => setQuestStarted(true)}
               >
-                <span>ПОЧАТИ QUEST_01</span>
+                <span>START QUEST_01</span>
                 <ArrowRight size={18} />
               </button>
 

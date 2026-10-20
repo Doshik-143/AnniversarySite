@@ -25,6 +25,7 @@ type Quest = {
   title: string;
   questions: Question[];
   rewardTitle: string;
+  subtitle?: string;
   rewardText: string;
   rewardMessage: string;
   rewardLabel: string;
@@ -200,7 +201,19 @@ export default function MemoryQuest({ onComplete }: MemoryQuestProps) {
             <div className="memory-icon unlocked"><Sparkles size={30} /></div>
             <p className="eyebrow">MEMORY UNLOCKED // {quest.code}</p>
             <h2>{quest.rewardTitle}</h2>
-            <div className="memory-photo-placeholder"><Heart size={34} /><span>{quest.photoLabel}</span></div>
+            <div className="memory-photo-placeholder">
+              <img
+                className="memory-photo"
+                src={
+                  questIndex === 0
+                    ? "/images/memories/first-glance.jpg"
+                    : questIndex === 1
+                      ? "/images/memories/funny-memory.jpg"
+                      : "/images/memories/our-beginning.jpg"
+                }
+                alt={quest.subtitle}
+              />
+            </div>
             <p className="memory-description">{quest.rewardText}</p>
             <div className="secret-message"><Heart size={19} /><div><span>{quest.rewardLabel}</span><p>{quest.rewardMessage}</p></div></div>
             <button className="start-button" onClick={continueFromMemory}><span>{questIndex < quests.length - 1 ? "ВІДКРИТИ НАСТУПНИЙ СПОГАД" : "ПЕРЕЙТИ ДО ЛИСТА ❤️"}</span><ArrowRight size={18} /></button>
@@ -211,6 +224,13 @@ export default function MemoryQuest({ onComplete }: MemoryQuestProps) {
             <div className="memory-icon unlocked"><Heart size={30} /></div>
             <p className="eyebrow">FINAL FILE // OPENED WITH LOVE</p>
             <h2>Моєму коханому. ❤️</h2>
+            <div className="memory-photo-placeholder final-photo">
+              <img
+                className="memory-photo"
+                src="/images/memories/favorite-photo.jpg"
+                alt="Мій найулюбленіший спогад із тобою"
+              />
+            </div>
             <p className="memory-description">Шість років тому я ще не знала, скільки всього нас чекає. Не знала, скільки буде сміху, наших дивних жартів, важливих розмов і моментів, які захочеться зберегти назавжди.</p>
             <p className="memory-description">Але якби мені дали можливість повернутися в той самий початок — до тих поглядів, до першого дивного повідомлення, до нашої «Правди», — я б знову пройшла цей шлях. Бо він привів мене до тебе.</p>
             <p className="memory-description">Дякую за нашу історію. За те, що ми є одне в одного. І за всі сторінки, які нам іще належить написати. Я люблю тебе. З нашою річницею, коханий. 💗</p>
