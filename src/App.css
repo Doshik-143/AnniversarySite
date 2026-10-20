@@ -421,3 +421,284 @@ h1 {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* QUEST 01 — FIND THE HEART */
+
+.quest-screen {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.quest-heading {
+  width: 100%;
+}
+
+.quest-heading .eyebrow {
+  margin-top: 25px;
+}
+
+.quest-heading h2 {
+  margin: 0;
+  font-size: clamp(30px, 6vw, 48px);
+  letter-spacing: -0.055em;
+}
+
+.quest-description {
+  margin: 12px 0 22px;
+  color: #bcb3c3;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.quest-stats {
+  display: flex;
+  width: 100%;
+  max-width: 560px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 14px 16px;
+  border: 1px solid #302633;
+  border-radius: 6px;
+  background: rgba(20, 14, 23, 0.85);
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+}
+
+.quest-stats span {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #ff80c3;
+}
+
+.quest-stats strong {
+  color: #f5f1f7;
+  font-size: 14px;
+}
+
+.quest-arena {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 1.55;
+  min-height: 230px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 112, 187, 0.35);
+  border-radius: 8px;
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(105, 30, 84, 0.22),
+      transparent 60%
+    ),
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    #0b0910;
+  background-size: auto, 28px 28px, 28px 28px, auto;
+  box-shadow:
+    inset 0 0 45px rgba(255, 80, 173, 0.04),
+    0 0 30px rgba(255, 80, 173, 0.06);
+}
+
+.arena-label {
+  position: absolute;
+  top: 13px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #786c80;
+  font-family: "DM Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 0.06em;
+}
+
+.heart-target,
+.found-heart {
+  position: absolute;
+  display: flex;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.heart-target {
+  padding: 0;
+  border: 1px solid rgba(255, 112, 187, 0.4);
+  background: rgba(255, 112, 187, 0.08);
+  color: #ff70bb;
+  cursor: pointer;
+  filter: drop-shadow(0 0 10px rgba(255, 112, 187, 0.45));
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.heart-target:hover {
+  background: rgba(255, 112, 187, 0.18);
+  color: #ffb6dc;
+}
+
+.heart-target:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 4px;
+}
+
+.found-heart {
+  color: #8dffbf;
+  background: rgba(141, 255, 191, 0.07);
+  border: 1px solid rgba(141, 255, 191, 0.25);
+  filter: drop-shadow(0 0 10px rgba(141, 255, 191, 0.4));
+  pointer-events: none;
+}
+
+.arena-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: rgba(255, 112, 187, 0.25);
+  font-family: "DM Mono", monospace;
+  font-size: 24px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.quest-progress {
+  display: flex;
+  width: 100%;
+  max-width: 560px;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #302633;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #ff70bb;
+  box-shadow: 0 0 12px rgba(255, 112, 187, 0.7);
+}
+
+.quest-progress > span {
+  color: #817987;
+  font-family: "DM Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.07em;
+}
+
+.restart-button {
+  align-self: flex-start;
+  margin-top: 17px;
+  padding: 9px 0;
+  border: 0;
+  background: transparent;
+  color: #a69aaa;
+  cursor: pointer;
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+}
+
+.restart-button:hover {
+  color: #ff80c3;
+}
+
+.victory-screen {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 0;
+}
+
+.trophy-icon {
+  display: flex;
+  width: 72px;
+  height: 72px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(141, 255, 191, 0.35);
+  border-radius: 50%;
+  background: rgba(141, 255, 191, 0.06);
+  color: #8dffbf;
+  box-shadow: 0 0 30px rgba(141, 255, 191, 0.1);
+}
+
+.victory-screen h2 {
+  margin: 0;
+  font-size: clamp(28px, 6vw, 44px);
+  letter-spacing: -0.05em;
+}
+
+.secret-message {
+  display: flex;
+  width: 100%;
+  max-width: 440px;
+  align-items: center;
+  gap: 14px;
+  margin: 12px 0 24px;
+  padding: 18px;
+  border: 1px solid rgba(255, 112, 187, 0.3);
+  border-radius: 7px;
+  background: rgba(255, 112, 187, 0.055);
+  color: #ff80c3;
+  text-align: left;
+}
+
+.secret-message span {
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+.secret-message p {
+  margin: 7px 0 0;
+  color: #bcb3c3;
+  font-size: 13px;
+}
+
+@media (max-width: 600px) {
+  .quest-heading h2 {
+    font-size: 34px;
+  }
+
+  .quest-description {
+    font-size: 13px;
+  }
+
+  .quest-arena {
+    aspect-ratio: 1.15;
+    min-height: 250px;
+  }
+
+  .heart-target,
+  .found-heart {
+    width: 40px;
+    height: 40px;
+  }
+
+  .arena-label {
+    font-size: 7px;
+  }
+
+  .quest-stats {
+    font-size: 10px;
+  }
+}
