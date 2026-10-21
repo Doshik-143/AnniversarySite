@@ -22,6 +22,14 @@ type AppInfo = {
     description: string;
 };
 
+type AppWindowState = {
+    app: AppInfo;
+    minimized: boolean;
+    maximized: boolean;
+    x: number;
+    y: number;
+};
+
 const apps: AppInfo[] = [
     {
         id: "universe",
@@ -62,7 +70,9 @@ const apps: AppInfo[] = [
 ];
 
 export default function Desktop() {
-    const [activeApp, setActiveApp] = useState<AppInfo | null>(null);
+    const [windows, setWindows] = useState<AppWindowState[]>([]);
+    const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
+
     const [time, setTime] = useState(() => new Date());
 
     useEffect(() => {
@@ -78,6 +88,77 @@ export default function Desktop() {
         duration: 3 + ((index * 13) % 40) / 10,
         delay: ((index * 17) % 30) / 10,
     }));
+
+    function openApp(app: AppInfo) {
+        setWindows((previous) => {
+            const existing = previous.find((window) => window.app.id === app.id);
+
+            if (existing) {
+                return previous.map((window) =>
+                    window.app.id === app.id
+                        ? { ...window, minimized: false }
+                        : window
+                );
+            }
+
+            return [
+                ...previous,
+                {
+                    app,
+                    minimized: false,
+                    maximized: false,
+                    x: 0,
+                    y: 0,
+                },
+            ];
+        });
+
+        setActiveWindowId(app.id);
+    }
+
+    function minimizeWindow(id: string) {
+        setWindows((previous) =>
+            previous.map((window) =>
+                window.app.id === id
+                    ? { ...window, minimized: true }
+                    : window
+            )
+        );
+
+        setActiveWindowId((previous) => previous === id ? null : previous);
+    }
+
+    function toggleMaximize(id: string) {
+        setWindows((previous) =>
+            previous.map((window) =>
+                window.app.id === id
+                    ? { ...window, maximized: !window.maximized }
+                    : window
+            )
+        );
+
+        setActiveWindowId(id);
+    }
+
+    function closeWindow(id: string) {
+        setWindows((previous) =>
+            previous.filter((window) => window.app.id !== id)
+        );
+
+        setActiveWindowId((previous) => previous === id ? null : previous);
+    }
+
+    function restoreWindow(id: string) {
+        setWindows((previous) =>
+            previous.map((window) =>
+                window.app.id === id
+                    ? { ...window, minimized: false }
+                    : window
+            )
+        );
+
+        setActiveWindowId(id);
+    }
 
     return (
         <div className="love-desktop">
@@ -132,7 +213,7 @@ export default function Desktop() {
                         <motion.button
                             key={app.id}
                             className="desktop-app"
-                            onClick={() => setActiveApp(app)}
+                            onClick={() => openApp(app)}
                             initial={{ opacity: 0, y: 12 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.08 }}
@@ -149,56 +230,91 @@ export default function Desktop() {
             </div>
 
             <AnimatePresence>
-                {activeApp && (
-                    <motion.div
-                        className="desktop-window"
-                        initial={{ opacity: 0, scale: 0.92, y: 12 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.94, y: 8 }}
-                    >
-                        <div className="desktop-window-header">
-                            <div className="desktop-window-title">
-                                <activeApp.icon size={16} />
-                                <span>{activeApp.name}</span>
+                {windows.map((window) => {
+                    const { app, minimized, maximized, x, y } = window;
+                    const Icon = app.icon;
+
+                    if (minimized) return null;
+
+                    return (
+                        <motion.div
+                            key={app.id}
+                            className={`desktop-window${maximized ? " maximized" : ""}`}
+                            drag={!maximized}
+                            dragMomentum={false}
+                            dragElastic={0}
+                            onPointerDown={() => setActiveWindowId(app.id)}
+                            style={{
+                                x,
+                                y,
+                                zIndex: activeWindowId === app.id ? 20 : 10,
+                            }}
+                            onDragEnd={(_, info) => {
+                                setWindows((previous) =>
+                                    previous.map((item) =>
+                                        item.app.id === app.id
+                                            ? {
+                                                ...item,
+                                                x: item.x + info.offset.x,
+                                                y: item.y + info.offset.y,
+                                            }
+                                            : item
+                                    )
+                                );
+                            }}
+                            initial={{ opacity: 0, scale: 0.92 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.94 }}
+                        >
+                            <div className="desktop-window-header">
+                                <div className="desktop-window-title">
+                                    <Icon size={16} />
+                                    <span>{app.name}</span>
+                                </div>
+
+                                <div className="desktop-window-controls">
+                                    <button
+                                        aria-label="Згорнути вікно"
+                                        onPointerDown={(event) => event.stopPropagation()}
+                                        onClick={() => minimizeWindow(app.id)}
+                                    >
+                                        <Minus size={15} />
+                                    </button>
+
+                                    <button
+                                        aria-label={maximized ? "Відновити розмір" : "Розгорнути вікно"}
+                                        onPointerDown={(event) => event.stopPropagation()}
+                                        onClick={() => toggleMaximize(app.id)}
+                                    >
+                                        <Maximize2 size={14} />
+                                    </button>
+
+                                    <button
+                                        aria-label="Закрити вікно"
+                                        onPointerDown={(event) => event.stopPropagation()}
+                                        onClick={() => closeWindow(app.id)}
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
                             </div>
 
-                            <div className="desktop-window-controls">
-                                <button
-                                    aria-label="Згорнути вікно"
-                                    onClick={() => setActiveApp(null)}
-                                >
-                                    <Minus size={15} />
-                                </button>
-                                <button
-                                    aria-label="Розгорнути вікно"
-                                    onClick={() => setActiveApp(null)}
-                                >
-                                    <Maximize2 size={14} />
-                                </button>
-                                <button
-                                    aria-label="Закрити вікно"
-                                    onClick={() => setActiveApp(null)}
-                                >
-                                    <X size={16} />
-                                </button>
+                            <div className="desktop-window-content">
+                                <div className="desktop-window-heart">
+                                    <Icon size={32} />
+                                </div>
+                                <h2>{app.name}</h2>
+                                <p>{app.description}</p>
+                                <span className="desktop-coming-soon">
+                                    APPLICATION INITIALIZED
+                                </span>
+                                <p className="desktop-window-note">
+                                    Ця програма скоро оживе 💗
+                                </p>
                             </div>
-                        </div>
-
-                        <div className="desktop-window-content">
-                            <div className="desktop-window-heart">
-                                <activeApp.icon size={32} />
-                            </div>
-                            <h2>{activeApp.name}</h2>
-                            <p>{activeApp.description}</p>
-                            <span className="desktop-coming-soon">
-                                APPLICATION INITIALIZED
-                            </span>
-                            <p className="desktop-window-note">
-                                Ця програма скоро оживе 💗
-                            </p>
-                        </div>
-                    </motion.div>
-                )}
+                        </motion.div>
+                    );
+                })}
             </AnimatePresence>
 
             <footer className="desktop-taskbar">
@@ -211,6 +327,32 @@ export default function Desktop() {
                         <FolderHeart size={17} />
                         <span>LOVE OS</span>
                     </span>
+                </div>
+
+                <div className="taskbar-open-apps">
+                    {windows.map((window) => {
+                        const Icon = window.app.icon;
+
+                        return (
+                            <button
+                                key={window.app.id}
+                                className={`taskbar-app ${activeWindowId === window.app.id && !window.minimized
+                                        ? "active"
+                                        : ""
+                                    }`}
+                                onClick={() => {
+                                    if (window.minimized || activeWindowId !== window.app.id) {
+                                        restoreWindow(window.app.id);
+                                    } else {
+                                        minimizeWindow(window.app.id);
+                                    }
+                                }}
+                                title={window.app.name}
+                            >
+                                <Icon size={17} />
+                            </button>
+                        );
+                    })}
                 </div>
 
                 <div className="taskbar-info">
