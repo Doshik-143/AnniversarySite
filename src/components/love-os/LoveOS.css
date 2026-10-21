@@ -346,20 +346,6 @@
     font-size: 9px;
 }
 
-.desktop-window {
-    position: absolute;
-    z-index: 2;
-    top: 50%;
-    left: 50%;
-    width: min(430px, calc(100% - 32px));
-    overflow: hidden;
-    border: 1px solid rgba(255, 112, 189, 0.42);
-    border-radius: 15px;
-    background: rgba(18, 12, 24, 0.97);
-    box-shadow: 0 25px 90px rgba(0, 0, 0, 0.55), 0 0 40px rgba(255, 112, 189, 0.08);
-    transform: translate(-50%, -50%);
-}
-
 .desktop-window-header {
     display: flex;
     align-items: center;
@@ -508,68 +494,80 @@
 /* WINDOW MANAGEMENT */
 
 .desktop-window {
-  top: 50%;
-  left: 50%;
-  cursor: default;
-  touch-action: none;
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    margin: auto;
+    height: fit-content;
+    width: min(430px, calc(100% - 32px));
+    overflow: hidden;
+    border: 1px solid rgba(255, 112, 189, 0.42);
+    border-radius: 15px;
+    background: rgba(18, 12, 24, 0.97);
+    box-shadow:
+        0 25px 90px rgba(0, 0, 0, 0.55),
+        0 0 40px rgba(255, 112, 189, 0.08);
 }
 
 .desktop-window-header {
-  cursor: grab;
-  user-select: none;
+    cursor: grab;
+    user-select: none;
 }
 
 .desktop-window-header:active {
-  cursor: grabbing;
+    cursor: grabbing;
 }
 
 .desktop-window-controls {
-  cursor: default;
+    cursor: default;
 }
 
 .desktop-window-controls button {
-  touch-action: manipulation;
+    touch-action: manipulation;
 }
 
 .desktop-window.maximized {
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: calc(100% - 66px);
-  border-radius: 0;
-  transform: none;
-  overflow: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    width: 100%;
+    height: calc(100% - 66px);
+    border-radius: 0;
+    overflow: auto;
+    transform: none !important;
 }
 
 .taskbar-open-apps {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex: 1;
-  min-width: 0;
-  overflow-x: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
 }
 
 .taskbar-app {
-  display: grid;
-  flex: 0 0 auto;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  color: #d8c5dd;
-  background: transparent;
-  cursor: pointer;
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: #d8c5dd;
+    background: transparent;
+    cursor: pointer;
 }
 
 .taskbar-app:hover,
 .taskbar-app.active {
-  border-color: rgba(255, 112, 189, 0.3);
-  color: #ff83ca;
-  background: rgba(255, 112, 189, 0.1);
+    border-color: rgba(255, 112, 189, 0.3);
+    color: #ff83ca;
+    background: rgba(255, 112, 189, 0.1);
 }
 
 .taskbar-app.active {
-  box-shadow: inset 0 -2px #ff70bd;
+    box-shadow: inset 0 -2px #ff70bd;
 }

@@ -245,8 +245,8 @@ export default function Desktop() {
                             dragElastic={0}
                             onPointerDown={() => setActiveWindowId(app.id)}
                             style={{
-                                x,
-                                y,
+                                x: maximized ? 0 : x,
+                                y: maximized ? 0 : y,
                                 zIndex: activeWindowId === app.id ? 20 : 10,
                             }}
                             onDragEnd={(_, info) => {
