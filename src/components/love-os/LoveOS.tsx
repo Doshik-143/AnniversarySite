@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Power } from "lucide-react";
 import "./LoveOS.css";
+import Desktop from "./Desktop";
 
 type LoveOSProps = {
     onExit: () => void;
@@ -106,12 +107,7 @@ export default function LoveOS({ onExit }: LoveOSProps) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                     >
-                        <p className="os-label">LOVE OS // SYSTEM RUNNING</p>
-                        <h1>Наш маленький всесвіт 💗</h1>
-                        <p>Робочий стіл завантажено. Продовження незабаром...</p>
-                        <button className="os-exit-button" onClick={onExit}>
-                            Вийти з LOVE OS
-                        </button>
+                        <Desktop />
                     </motion.section>
                 )}
             </AnimatePresence>
