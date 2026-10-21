@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, Sparkles } from "lucide-react";
 
@@ -7,30 +8,92 @@ type HeartQuestProps = {
   onRestart: () => void;
 };
 
-const targets = [
-  { id: 1, x: 15, y: 23 },
-  { id: 2, x: 72, y: 17 },
-  { id: 3, x: 47, y: 52 },
-  { id: 4, x: 22, y: 76 },
-  { id: 5, x: 82, y: 72 },
-];
+type Target = {
+  id: number;
+  x: number;
+  y: number;
+};
 
 const REQUIRED_HEARTS = 3;
+const TOTAL_HEARTS = 5;
+const MIN_DISTANCE = 0.24;
+const HIT_RADIUS = 34;
+
+function createTargets(): Target[] {
+  const result: Target[] = [];
+  let attempts = 0;
+
+  while (result.length < TOTAL_HEARTS && attempts < 2000) {
+    attempts++;
+
+    const candidate: Target = {
+      id: result.length + 1,
+      x: 9 + Math.random() * 82,
+      y: 14 + Math.random() * 72,
+    };
+
+    const hasEnoughSpace = result.every((target) => {
+      const dx = (candidate.x - target.x) / 100;
+      const dy = (candidate.y - target.y) / 100;
+
+      return Math.hypot(dx, dy) >= MIN_DISTANCE;
+    });
+
+    if (hasEnoughSpace) {
+      result.push(candidate);
+    }
+  }
+
+  return result;
+}
 
 export default function HeartQuest({
   collected,
   onCollect,
   onRestart,
 }: HeartQuestProps) {
+  const [targets, setTargets] = useState<Target[]>(createTargets);
+  const [missed, setMissed] = useState(false);
+
+  function handleArenaClick(
+    event: React.MouseEvent<HTMLDivElement>,
+  ) {
+    if (missed) setMissed(false);
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const clickY = event.clientY - rect.top;
+
+    const hiddenTarget = targets.find((target) => {
+      if (collected.includes(target.id)) return false;
+
+      const targetX = (target.x / 100) * rect.width;
+      const targetY = (target.y / 100) * rect.height;
+
+      return Math.hypot(clickX - targetX, clickY - targetY) <= HIT_RADIUS;
+    });
+
+    if (hiddenTarget) {
+      onCollect(hiddenTarget.id);
+      setMissed(false);
+    } else {
+      setMissed(true);
+    }
+  }
+
+  function restartQuest() {
+    setTargets(createTargets());
+    setMissed(false);
+    onRestart();
+  }
+
   return (
     <>
       <div className="quest-heading">
         <p className="eyebrow">QUEST_01 // ACTIVE MISSION</p>
-
         <h2>
           Find the heart<span className="accent">.</span>
         </h2>
-
         <p className="quest-description">
           Знайди три приховані сердечка, щоб відкрити секрет.
         </p>
@@ -41,7 +104,6 @@ export default function HeartQuest({
           <Sparkles size={15} />
           HEARTS FOUND
         </span>
-
         <strong>
           {collected.length} / {REQUIRED_HEARTS}
         </strong>
@@ -50,56 +112,21 @@ export default function HeartQuest({
       <div
         className="quest-arena"
         aria-label="Ігрове поле з прихованими сердечками"
+        onClick={handleArenaClick}
+        style={{ cursor: "crosshair" }}
       >
         <div className="arena-label">
           <span>LOCATION: UNKNOWN</span>
           <span>SEARCHING...</span>
         </div>
 
-        {targets.map((target) => {
-          const found = collected.includes(target.id);
-
-          if (found) return null;
-
-          return (
-            <motion.button
-              key={target.id}
-              className="heart-target"
-              style={{
-                left: `${target.x}%`,
-                top: `${target.y}%`,
-              }}
-              onClick={() => onCollect(target.id)}
-              aria-label={`Знайти сердечко ${target.id}`}
-              whileHover={{ scale: 1.25 }}
-              whileTap={{ scale: 0.8 }}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{
-                opacity: 1,
-                scale: [1, 1.12, 1],
-              }}
-              transition={{
-                opacity: { duration: 0.35 },
-                scale: {
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: target.id * 0.15,
-                },
-              }}
-            >
-              <Heart size={25} fill="currentColor" />
-            </motion.button>
-          );
-        })}
-
         {collected.map((id) => {
           const target = targets.find((item) => item.id === id);
-
           if (!target) return null;
 
           return (
             <motion.div
-              key={`found-${id}`}
+              key={id}
               className="found-heart"
               style={{
                 left: `${target.x}%`,
@@ -107,6 +134,7 @@ export default function HeartQuest({
               }}
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 300 }}
             >
               <Heart size={20} fill="currentColor" />
             </motion.div>
@@ -114,6 +142,16 @@ export default function HeartQuest({
         })}
 
         <div className="arena-crosshair">+</div>
+
+        {missed && (
+          <motion.p
+            className="arena-feedback"
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            Тут нічого немає... Спробуй ще 💗
+          </motion.p>
+        )}
       </div>
 
       <div className="quest-progress">
@@ -125,7 +163,6 @@ export default function HeartQuest({
             }}
           />
         </div>
-
         <span>
           {collected.length === 0
             ? "СИСТЕМА ЧЕКАЄ НА ТЕБЕ..."
@@ -133,10 +170,7 @@ export default function HeartQuest({
         </span>
       </div>
 
-      <button
-        className="restart-button"
-        onClick={onRestart}
-      >
+      <button className="restart-button" onClick={restartQuest}>
         ПОЧАТИ ЗАНОВО
       </button>
     </>

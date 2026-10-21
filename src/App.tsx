@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
@@ -19,7 +19,20 @@ function App() {
 
   const [memoryQuest, setMemoryQuest] = useState(false);
 
+  const [showVictory, setShowVictory] = useState(false);
   const won = collected.length >= 3;
+  useEffect(() => {
+    if (!won) {
+      setShowVictory(false);
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setShowVictory(true);
+    }, 800);
+
+    return () => window.clearTimeout(timer);
+  }, [won]);
 
   function collectHeart(id: number) {
     setCollected((previous) =>
@@ -183,7 +196,7 @@ function App() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              {!won ? (
+              {!showVictory ? (
                 <HeartQuest
                   collected={collected}
                   onCollect={collectHeart}
