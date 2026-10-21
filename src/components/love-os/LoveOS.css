@@ -1,0 +1,136 @@
+.love-os {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    overflow: auto;
+    padding: 24px;
+    color: #f8edf7;
+    background:
+        radial-gradient(ellipse at top, rgba(104, 36, 88, 0.2), transparent 60%),
+        #09070d;
+    font-family: "DM Mono", monospace;
+}
+
+.os-power-screen,
+.os-boot-screen,
+.os-splash-screen,
+.os-desktop-screen {
+    width: min(100%, 620px);
+    text-align: center;
+}
+
+.os-label,
+.os-hint {
+    color: #ff70bd;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+}
+
+.os-power-button {
+    display: grid;
+    place-items: center;
+    width: 120px;
+    height: 120px;
+    margin: 32px auto;
+    border: 2px solid #624357;
+    border-radius: 50%;
+    color: #80627a;
+    background: #171019;
+    box-shadow: 0 0 30px rgba(255, 105, 189, 0.06);
+    cursor: pointer;
+    transition: color 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.os-power-button:hover {
+    color: #ff70bd;
+    border-color: #ff70bd;
+    box-shadow: 0 0 35px rgba(255, 105, 189, 0.25);
+}
+
+.os-power-screen h1,
+.os-desktop-screen h1 {
+    font-family: sans-serif;
+    font-size: clamp(24px, 5vw, 36px);
+}
+
+.os-subtitle {
+    color: #b9a9bc;
+    line-height: 1.8;
+}
+
+.os-boot-screen {
+    text-align: left;
+    line-height: 1.8;
+}
+
+.os-boot-screen span {
+    color: #6dffad;
+}
+
+.os-progress {
+    width: 100%;
+    height: 5px;
+    margin: 28px 0 14px;
+    border-radius: 5px;
+    background: linear-gradient(90deg, #ff70bd, #b78aff);
+    transform-origin: left;
+    box-shadow: 0 0 15px rgba(255, 112, 189, 0.35);
+}
+
+.os-splash-screen h1 {
+    color: #ff70bd;
+    font-size: clamp(36px, 8vw, 64px);
+    letter-spacing: 0.12em;
+}
+
+.os-splash-screen p {
+    color: #b9a9bc;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    line-height: 1.8;
+}
+
+.os-logo-heart {
+    color: #ff70bd;
+    font-family: sans-serif;
+    font-size: 90px;
+    filter: drop-shadow(0 0 25px rgba(255, 112, 189, 0.6));
+}
+
+.os-splash-screen h2 {
+    margin-top: 36px;
+    font-size: 16px;
+    letter-spacing: 0.2em;
+}
+
+.os-exit-button {
+    margin-top: 28px;
+    padding: 12px 20px;
+    border: 1px solid #ff70bd;
+    border-radius: 8px;
+    color: #ff70bd;
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+}
+
+.os-exit-button:hover {
+    color: #09070d;
+    background: #ff70bd;
+}
+
+@media (max-width: 480px) {
+    .love-os {
+        padding: 18px;
+    }
+
+    .os-boot-screen {
+        font-size: 12px;
+    }
+
+    .os-logo-heart {
+        font-size: 72px;
+    }
+}
