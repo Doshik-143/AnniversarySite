@@ -40,7 +40,7 @@ export default function LoveOS({ onExit }: LoveOSProps) {
                             <Power size={42} />
                         </motion.button>
 
-                        <h1>Увімкнути LOVE OS?</h1>
+                        <h1>LOVE OS</h1>
                         <p className="os-subtitle">
                             Здається, тут іще залишилося дещо особливе...
                         </p>

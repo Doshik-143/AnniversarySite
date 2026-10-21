@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowLeft,
   ArrowRight,
   Heart,
   LockKeyhole,
@@ -9,6 +8,7 @@ import {
 } from "lucide-react";
 import MemoryChat from "./MemoryChat";
 import WrongAnswerPopup from "./WrongAnswerPopup";
+import LoveOS from "./love-os/LoveOS";
 
 type MemoryQuestProps = {
   onComplete: () => void;
@@ -131,6 +131,8 @@ export default function MemoryQuest({ onComplete }: MemoryQuestProps) {
   const quest = quests[questIndex];
   const question = quest.questions[questionIndex];
 
+  const [showLoveOS, setShowLoveOS] = useState(false);
+
   function checkAnswer() {
     if (!selected) return;
     if (selected !== question.correctAnswer) {
@@ -157,6 +159,10 @@ export default function MemoryQuest({ onComplete }: MemoryQuestProps) {
       return;
     }
     setPhase("letter");
+  }
+
+  if (showLoveOS) {
+    return <LoveOS onExit={onComplete} />;
   }
 
   return (
@@ -273,7 +279,12 @@ export default function MemoryQuest({ onComplete }: MemoryQuestProps) {
             <p className="memory-description">Але якби мені дали можливість повернутися в той самий початок — до тих поглядів, до першого дивного повідомлення, до нашої «Правди», — я б знову пройшла цей шлях. Бо він привів мене до тебе.</p>
             <p className="memory-description">Дякую за нашу історію. За те, що ми є одне в одного. І за всі сторінки, які нам іще належить написати. Я люблю тебе. З нашою річницею, коханий. 💗</p>
             <div className="secret-message"><Sparkles size={19} /><div><span>LOVE.exe // STATUS</span><p>Шість років позаду. Ціла вічність попереду.</p></div></div>
-            <button className="start-button" onClick={onComplete}><span>ПОВЕРНУТИСЯ НА ПОЧАТОК</span><ArrowLeft size={18} /></button>
+            <button
+              className="start-button"
+              onClick={() => setShowLoveOS(true)}
+            >
+              <span>SECRET BUTTON</span>
+            </button>
             <p className="button-hint">END OF FILE // NOT THE END OF OUR STORY</p>
           </motion.div>
         )}
