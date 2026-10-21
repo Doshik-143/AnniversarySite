@@ -8,6 +8,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import MemoryChat from "./MemoryChat";
+import WrongAnswerPopup from "./WrongAnswerPopup";
 
 type MemoryQuestProps = {
   onComplete: () => void;
@@ -125,13 +126,15 @@ export default function MemoryQuest({ onComplete }: MemoryQuestProps) {
 
   const [chatOpen, setChatOpen] = useState(false);
 
+  const [showWrongAnswer, setShowWrongAnswer] = useState(false);
+
   const quest = quests[questIndex];
   const question = quest.questions[questionIndex];
 
   function checkAnswer() {
     if (!selected) return;
     if (selected !== question.correctAnswer) {
-      setFeedback("НЕ ЗОВСІМ 💗 Спробуй ще раз — ти ж знаєш нашу історію.");
+      setShowWrongAnswer(true);
       return;
     }
 
@@ -189,8 +192,18 @@ export default function MemoryQuest({ onComplete }: MemoryQuestProps) {
             <p className="memory-description">{question.description}</p>
             <div className="answer-list">
               {question.answers.map((answer) => (
-                <button key={answer.id} className={`answer-option ${selected === answer.id ? "selected" : ""}`} onClick={() => { setSelected(answer.id); setFeedback(""); }} aria-pressed={selected === answer.id}>
-                  <span className="answer-key">{answer.id.toUpperCase()}</span><span>{answer.text}</span>
+                <button
+                  key={answer.id}
+                  className={`answer-option ${selected === answer.id ? "selected" : ""}`}
+                  disabled={showWrongAnswer}
+                  onClick={() => {
+                    setSelected(answer.id);
+                    setFeedback("");
+                  }}
+                  aria-pressed={selected === answer.id}
+                >
+                  <span className="answer-key">{answer.id.toUpperCase()}</span>
+                  <span>{answer.text}</span>
                 </button>
               ))}
             </div>
@@ -266,6 +279,10 @@ export default function MemoryQuest({ onComplete }: MemoryQuestProps) {
         )}
       </AnimatePresence>
       <MemoryChat open={chatOpen} onClose={() => setChatOpen(false)} />
+      <WrongAnswerPopup
+        show={showWrongAnswer}
+        onHide={() => setShowWrongAnswer(false)}
+      />
     </motion.div>
   );
 }
