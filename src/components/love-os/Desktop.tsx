@@ -16,6 +16,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, Power } from "lucide-react";
 import OurUniverse from "./apps/OurUniverse/OurUniverse";
+import { WindowItem } from "./WindowItem";
 
 type AppInfo = {
     id: string;
@@ -328,25 +329,20 @@ export default function Desktop() {
 
             <AnimatePresence>
                 {windows.map((window) => {
-                    const { app, minimized, maximized, x, y } = window;
-                    const Icon = app.icon;
+                    const { app, minimized } = window;
 
                     if (minimized) return null;
 
                     return (
-                        <motion.div
+                        <WindowItem
                             key={app.id}
-                            className={`desktop-window${maximized ? " maximized" : ""}`}
-                            drag={!maximized}
-                            dragMomentum={false}
-                            dragElastic={0}
-                            onPointerDown={() => setActiveWindowId(app.id)}
-                            style={{
-                                x: maximized ? 0 : x,
-                                y: maximized ? 0 : y,
-                                zIndex: activeWindowId === app.id ? 20 : 10,
-                            }}
-                            onDragEnd={(_, info) => {
+                            window={window}
+                            isActive={activeWindowId === app.id}
+                            onActivate={() => setActiveWindowId(app.id)}
+                            onMinimize={() => minimizeWindow(app.id)}
+                            onToggleMaximize={() => toggleMaximize(app.id)}
+                            onClose={() => closeWindow(app.id)}
+                            onDragEnd={(info) => {
                                 setWindows((previous) =>
                                     previous.map((item) =>
                                         item.app.id === app.id
@@ -359,65 +355,25 @@ export default function Desktop() {
                                     )
                                 );
                             }}
-                            initial={{ opacity: 0, scale: 0.92 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.94 }}
                         >
-                            <div className="desktop-window-header">
-                                <div className="desktop-window-title">
-                                    <Icon size={16} />
-                                    <span>{app.name}</span>
-                                </div>
-
-                                <div className="desktop-window-controls">
-                                    <button
-                                        aria-label="Згорнути вікно"
-                                        onPointerDown={(event) => event.stopPropagation()}
-                                        onClick={() => minimizeWindow(app.id)}
-                                    >
-                                        <Minus size={15} />
-                                    </button>
-
-                                    <button
-                                        aria-label={maximized ? "Відновити розмір" : "Розгорнути вікно"}
-                                        onPointerDown={(event) => event.stopPropagation()}
-                                        onClick={() => toggleMaximize(app.id)}
-                                    >
-                                        <Maximize2 size={14} />
-                                    </button>
-
-                                    <button
-                                        aria-label="Закрити вікно"
-                                        onPointerDown={(event) => event.stopPropagation()}
-                                        onClick={() => closeWindow(app.id)}
-                                    >
-                                        <X size={16} />
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="desktop-window-content"
-                                onPointerDown={(e) => e.stopPropagation()}
-                            >
-                                {app.id === "our-universe" ? (
-                                    <OurUniverse />
-                                ) : (
-                                    <>
-                                        <div className="desktop-window-heart">
-                                            <Icon size={32} />
-                                        </div>
-                                        <h2>{app.name}</h2>
-                                        <p>{app.description}</p>
-                                        <span className="desktop-coming-soon">
-                                            APPLICATION INITIALIZED
-                                        </span>
-                                        <p className="desktop-window-note">
-                                            Ця програма скоро оживе 💗
-                                        </p>
-                                    </>
-                                )}
-                            </div>
-                        </motion.div>
+                            {app.id === "our-universe" ? (
+                                <OurUniverse />
+                            ) : (
+                                <>
+                                    <div className="desktop-window-heart">
+                                        <app.icon size={32} />
+                                    </div>
+                                    <h2>{app.name}</h2>
+                                    <p>{app.description}</p>
+                                    <span className="desktop-coming-soon">
+                                        APPLICATION INITIALIZED
+                                    </span>
+                                    <p className="desktop-window-note">
+                                        Ця програма скоро оживе 💗
+                                    </p>
+                                </>
+                            )}
+                        </WindowItem>
                     );
                 })}
             </AnimatePresence>
