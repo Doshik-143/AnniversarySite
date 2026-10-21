@@ -1,0 +1,92 @@
+.our-universe {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 420px;
+    overflow: hidden;
+    border-radius: inherit;
+    background: #08050d;
+    color: #fff1fb;
+    font-family: "DM Mono", monospace;
+}
+
+.universe-canvas {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    touch-action: none;
+    cursor: grab;
+}
+
+.universe-canvas:active {
+    cursor: grabbing;
+}
+
+.universe-canvas canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.universe-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 22px 16px;
+    pointer-events: none;
+    text-align: center;
+    background: linear-gradient(180deg,
+            rgba(8, 5, 13, 0.45),
+            transparent 30%,
+            transparent 72%,
+            rgba(8, 5, 13, 0.35));
+}
+
+.universe-label,
+.universe-hint {
+    color: #ff83ca;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+}
+
+.universe-overlay h1 {
+    margin: 12px 0 8px;
+    font-family: sans-serif;
+    font-size: clamp(22px, 4vw, 36px);
+    text-shadow: 0 0 25px rgba(255, 112, 189, 0.45);
+}
+
+.universe-overlay h1 span {
+    margin-left: 8px;
+    color: #ff70bd;
+}
+
+.universe-overlay p {
+    margin: 0;
+    color: rgba(255, 241, 251, 0.72);
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.universe-hint {
+    position: absolute;
+    bottom: 20px;
+    opacity: 0.65;
+}
+
+@media (max-width: 480px) {
+    .our-universe {
+        min-height: 360px;
+    }
+
+    .universe-overlay {
+        padding-top: 16px;
+    }
+
+    .universe-overlay p {
+        max-width: 260px;
+    }
+}

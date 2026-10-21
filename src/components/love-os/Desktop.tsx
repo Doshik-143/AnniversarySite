@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, Power } from "lucide-react";
+import OurUniverse from "./apps/OurUniverse/OurUniverse";
 
 type AppInfo = {
     id: string;
@@ -33,7 +34,7 @@ type AppWindowState = {
 
 const apps: AppInfo[] = [
     {
-        id: "universe",
+        id: "our-universe",
         name: "OUR UNIVERSE",
         icon: Star,
         description: "Наш маленький космос і спогади.",
@@ -395,18 +396,26 @@ export default function Desktop() {
                                 </div>
                             </div>
 
-                            <div className="desktop-window-content">
-                                <div className="desktop-window-heart">
-                                    <Icon size={32} />
-                                </div>
-                                <h2>{app.name}</h2>
-                                <p>{app.description}</p>
-                                <span className="desktop-coming-soon">
-                                    APPLICATION INITIALIZED
-                                </span>
-                                <p className="desktop-window-note">
-                                    Ця програма скоро оживе 💗
-                                </p>
+                            <div className="desktop-window-content"
+                                onPointerDown={(e) => e.stopPropagation()}
+                            >
+                                {app.id === "our-universe" ? (
+                                    <OurUniverse />
+                                ) : (
+                                    <>
+                                        <div className="desktop-window-heart">
+                                            <Icon size={32} />
+                                        </div>
+                                        <h2>{app.name}</h2>
+                                        <p>{app.description}</p>
+                                        <span className="desktop-coming-soon">
+                                            APPLICATION INITIALIZED
+                                        </span>
+                                        <p className="desktop-window-note">
+                                            Ця програма скоро оживе 💗
+                                        </p>
+                                    </>
+                                )}
                             </div>
                         </motion.div>
                     );
