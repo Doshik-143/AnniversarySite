@@ -14,6 +14,7 @@ import {
     Maximize2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Bell, Power } from "lucide-react";
 
 type AppInfo = {
     id: string;
@@ -78,6 +79,24 @@ export default function Desktop() {
         x: number;
         y: number;
     } | null>(null);
+
+    const [startMenuOpen, setStartMenuOpen] = useState(false);
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
+
+    const [ip, setIp] = useState<string>("Завантаження...");
+
+    useEffect(() => {
+        // Отримуємо IP-адресу через безкоштовне API
+        fetch("https://api.ipify.org?format=json")
+            .then((res) => res.json())
+            .then((data) => setIp(data.ip))
+            .catch((err) => {
+                console.error("Помилка отримання IP:", err);
+                setIp("Не визначено");
+            });
+    }, []);
+
+    const [isShuttingDown, setIsShuttingDown] = useState(false);
 
     const [time, setTime] = useState(() => new Date());
 
@@ -166,8 +185,32 @@ export default function Desktop() {
         setActiveWindowId(id);
     }
 
+    function onShutdown() {
+        setIsShuttingDown(true);
+    }
+
     return (
         <div className="love-desktop">
+            <AnimatePresence>
+                {isShuttingDown && (
+                    <motion.div
+                        className="os-shutdown-screen"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        <Heart size={42} fill="currentColor" />
+                        <h1>LOVE OS</h1>
+                        <p>Завершуємо нашу маленьку сесію...</p>
+                        <span>IT WAS NICE HAVING YOU HERE ♥</span>
+
+                        <button onClick={() => setIsShuttingDown(false)}>
+                            Повернутися до системи
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <div className="desktop-hearts" aria-hidden="true">
                 {floatingHearts.map((heart) => (
                     <motion.span
@@ -325,9 +368,18 @@ export default function Desktop() {
 
             <footer className="desktop-taskbar">
                 <div className="taskbar-system">
-                    <span className="taskbar-logo">
+                    <button
+                        className={`taskbar-logo start-button-icon ${startMenuOpen ? "selected" : ""
+                            }`}
+                        onClick={() => {
+                            setStartMenuOpen((previous) => !previous);
+                            setNotificationsOpen(false);
+                        }}
+                        aria-label="Відкрити меню LOVE OS"
+                        aria-expanded={startMenuOpen}
+                    >
                         <Heart size={19} fill="currentColor" />
-                    </span>
+                    </button>
                     <span className="taskbar-divider" />
                     <span className="taskbar-running">
                         <FolderHeart size={17} />
@@ -377,6 +429,19 @@ export default function Desktop() {
                 </div>
 
                 <div className="taskbar-info">
+                    <button
+                        className={`taskbar-notifications ${notificationsOpen ? "selected" : ""
+                            }`}
+                        onClick={() => {
+                            setNotificationsOpen((previous) => !previous);
+                            setStartMenuOpen(false);
+                        }}
+                        aria-label="Центр сповіщень"
+                        aria-expanded={notificationsOpen}
+                    >
+                        <Bell size={17} />
+                        <span className="notification-dot" />
+                    </button>
                     <Wifi size={16} />
                     <BatteryFull size={17} />
                     <div className="taskbar-clock">
@@ -395,7 +460,115 @@ export default function Desktop() {
                         </span>
                     </div>
                 </div>
-            </footer><AnimatePresence>
+            </footer>
+
+            <AnimatePresence>
+                {startMenuOpen && (
+                    <motion.div
+                        className="start-menu"
+                        initial={{ opacity: 0, y: 14, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.97 }}
+                    >
+                        <div className="start-menu-heading">
+                            <div className="start-menu-heart">
+                                <Heart size={24} fill="currentColor" />
+                            </div>
+                            <div>
+                                <h2>Привіт, коханий 💗</h2>
+                                <p>Ласкаво просимо у наш світ</p>
+                            </div>
+                        </div>
+
+                        <div className="start-menu-section">
+                            <span>ТВОЇ ПРОГРАМИ</span>
+
+                            {apps.map((app) => {
+                                const Icon = app.icon;
+
+                                return (
+                                    <button
+                                        key={app.id}
+                                        className="start-menu-app"
+                                        onClick={() => {
+                                            openApp(app);
+                                            setStartMenuOpen(false);
+                                        }}
+                                    >
+                                        <Icon size={19} />
+                                        <span>{app.name}</span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+
+                        <div className="start-menu-footer">
+                            <span className="start-menu-ip">
+                                IP: {ip}
+                            </span>
+
+                            <div className="start-menu-footer-actions">
+                                <Heart size={14} fill="currentColor" />
+
+                                <button
+                                    className="start-menu-power"
+                                    aria-label="Вимкнути LOVE OS"
+                                    title="Вимкнути LOVE OS"
+                                    onClick={() => {
+                                        setStartMenuOpen(false);
+                                        onShutdown();
+                                    }}
+                                >
+                                    <Power size={17} />
+                                </button>
+                            </div>
+                        </div>
+
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {notificationsOpen && (
+                    <motion.div
+                        className="notification-center"
+                        initial={{ opacity: 0, y: 12, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.97 }}
+                    >
+                        <div className="notification-heading">
+                            <h2>Сповіщення</h2>
+                            <button
+                                onClick={() => setNotificationsOpen(false)}
+                                aria-label="Закрити сповіщення"
+                            >
+                                <X size={17} />
+                            </button>
+                        </div>
+
+                        <div className="love-notification">
+                            <div className="notification-icon">
+                                <Heart size={19} fill="currentColor" />
+                            </div>
+
+                            <div className="notification-message">
+                                <div className="notification-app-name">
+                                    LOVE.exe // REMINDER
+                                </div>
+                                <p>Люблю тебе♥</p>
+                                <span>Просто нагадування для найкращого 💗</span>
+                            </div>
+                        </div>
+
+                        <div className="notification-bottom">
+                            НАДІСЛАНО З ЛЮБОВ'Ю · ♥
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <AnimatePresence>
                 {contextMenu && (
                     <>
                         <motion.div

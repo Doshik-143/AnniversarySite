@@ -635,3 +635,337 @@
     color: #ff829a;
     background: rgba(255, 75, 110, 0.12);
 }
+
+
+/* START MENU BUTTON */
+
+.start-button-icon {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    color: #ff70bd;
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.start-button-icon:hover,
+.start-button-icon.selected {
+    border-color: rgba(255, 112, 189, 0.25);
+    background: rgba(255, 112, 189, 0.12);
+    box-shadow: 0 0 16px rgba(255, 112, 189, 0.1);
+}
+
+/* START MENU */
+
+.start-menu,
+.notification-center {
+    position: absolute;
+    z-index: 80;
+    bottom: 78px;
+    width: min(350px, calc(100vw - 24px));
+    padding: 18px;
+    border: 1px solid rgba(255, 112, 189, 0.3);
+    border-radius: 17px;
+    background: rgba(17, 10, 23, 0.96);
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(255, 112, 189, 0.08);
+    backdrop-filter: blur(22px);
+}
+
+.start-menu {
+    left: 14px;
+}
+
+.start-menu-heading {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.start-menu-heart {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba(255, 112, 189, 0.3);
+    border-radius: 14px;
+    color: #ff70bd;
+    background: rgba(255, 112, 189, 0.1);
+}
+
+.start-menu-heading h2 {
+    margin: 0 0 6px;
+    font-family: sans-serif;
+    font-size: 16px;
+}
+
+.start-menu-heading p {
+    margin: 0;
+    color: #b9a9bc;
+    font-size: 11px;
+}
+
+.start-menu-section {
+    display: grid;
+    gap: 4px;
+    padding: 17px 0;
+}
+
+.start-menu-section>span {
+    margin-bottom: 7px;
+    color: #ff83ca;
+    font-size: 9px;
+    letter-spacing: 0.13em;
+}
+
+.start-menu-app {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    color: #f5eaf4;
+    background: transparent;
+    font-family: inherit;
+    font-size: 11px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.start-menu-app svg {
+    flex-shrink: 0;
+    color: #ff83ca;
+}
+
+.start-menu-app:hover {
+    border-color: rgba(255, 112, 189, 0.2);
+    background: rgba(255, 112, 189, 0.09);
+}
+
+.start-menu-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 13px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: #a999ae;
+    font-size: 9px;
+}
+
+.start-menu-footer svg {
+    color: #ff70bd;
+}
+
+/* NOTIFICATION CENTER */
+
+.taskbar-notifications {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: #d8c5dd;
+    background: transparent;
+    cursor: pointer;
+}
+
+.taskbar-notifications:hover,
+.taskbar-notifications.selected {
+    border-color: rgba(255, 112, 189, 0.25);
+    color: #ff83ca;
+    background: rgba(255, 112, 189, 0.1);
+}
+
+.notification-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ff70bd;
+    box-shadow: 0 0 7px rgba(255, 112, 189, 0.65);
+}
+
+.notification-center {
+    right: 14px;
+}
+
+.notification-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 17px;
+}
+
+.notification-heading h2 {
+    margin: 0;
+    font-family: sans-serif;
+    font-size: 17px;
+}
+
+.notification-heading button {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 8px;
+    color: #cbbbd0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.notification-heading button:hover {
+    color: #ff83ca;
+    background: rgba(255, 112, 189, 0.1);
+}
+
+.love-notification {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid rgba(255, 112, 189, 0.2);
+    border-radius: 12px;
+    background: rgba(255, 112, 189, 0.06);
+}
+
+.notification-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    color: #ff70bd;
+    background: rgba(255, 112, 189, 0.12);
+}
+
+.notification-message {
+    min-width: 0;
+}
+
+.notification-app-name {
+    color: #ff83ca;
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    overflow-wrap: anywhere;
+}
+
+.notification-message p {
+    margin: 10px 0 6px;
+    color: #fff0fa;
+    font-family: sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.notification-message>span {
+    color: #b9a9bc;
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+.notification-bottom {
+    margin-top: 15px;
+    color: #9d8ba3;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+
+    .start-menu,
+    .notification-center {
+        right: 12px;
+        left: 12px;
+        bottom: 76px;
+        width: auto;
+    }
+}
+
+
+.start-menu-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #ff70bd;
+}
+
+.start-menu-power {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 112, 189, 0.2);
+  border-radius: 9px;
+  color: #ff83ca;
+  background: rgba(255, 112, 189, 0.06);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.start-menu-power:hover {
+  border-color: #ff70bd;
+  color: #fff;
+  background: rgba(255, 75, 110, 0.2);
+  box-shadow: 0 0 15px rgba(255, 112, 189, 0.2);
+}
+
+.start-menu-ip {
+  color: #b9a9bc;
+  font-size: 10px;
+}
+
+.os-shutdown-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  color: #ff83ca;
+  background: #09070d;
+  text-align: center;
+}
+
+.os-shutdown-screen h1 {
+  margin: 0;
+  letter-spacing: 0.15em;
+}
+
+.os-shutdown-screen p {
+  color: #d1bfd5;
+}
+
+.os-shutdown-screen span {
+  color: #88758f;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+.os-shutdown-screen button {
+  margin-top: 18px;
+  padding: 12px 18px;
+  border: 1px solid rgba(255, 112, 189, 0.4);
+  border-radius: 9px;
+  color: #ff83ca;
+  background: rgba(255, 112, 189, 0.08);
+  cursor: pointer;
+}
