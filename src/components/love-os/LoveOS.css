@@ -477,3 +477,30 @@
         gap: 8px;
     }
 }
+
+.desktop-hearts {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.floating-heart {
+    position: absolute;
+    display: block;
+    color: #ff70bd;
+    text-shadow:
+        0 0 8px rgba(255, 112, 189, 0.65),
+        0 0 20px rgba(255, 112, 189, 0.25);
+    will-change: transform, opacity;
+    user-select: none;
+}
+
+.desktop-app-grid {
+    z-index: 1;
+}
+
+.desktop-taskbar {
+    z-index: 3;
+}

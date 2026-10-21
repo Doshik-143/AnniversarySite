@@ -70,8 +70,45 @@ export default function Desktop() {
         return () => window.clearInterval(timer);
     }, []);
 
+    const floatingHearts = Array.from({ length: 24 }, (_, index) => ({
+        id: index,
+        left: `${(index * 47 + 13) % 100}%`,
+        top: `${(index * 67 + 19) % 100}%`,
+        size: 10 + ((index * 7) % 15),
+        duration: 3 + ((index * 13) % 40) / 10,
+        delay: ((index * 17) % 30) / 10,
+    }));
+
     return (
         <div className="love-desktop">
+            <div className="desktop-hearts" aria-hidden="true">
+                {floatingHearts.map((heart) => (
+                    <motion.span
+                        key={heart.id}
+                        className="floating-heart"
+                        style={{
+                            left: heart.left,
+                            top: heart.top,
+                            fontSize: heart.size,
+                        }}
+                        initial={{ opacity: 0.08, y: 0, scale: 0.8 }}
+                        animate={{
+                            opacity: [0.08, 0.45, 0.12, 0.6, 0.08],
+                            y: [0, -12, 4, -8, 0],
+                            scale: [0.8, 1.1, 0.9, 1.15, 0.8],
+                        }}
+                        transition={{
+                            duration: heart.duration,
+                            delay: heart.delay,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                        }}
+                    >
+                        ♥
+                    </motion.span>
+                ))}
+            </div>
+
             <div className="desktop-glow desktop-glow-one" />
             <div className="desktop-glow desktop-glow-two" />
 
@@ -86,12 +123,6 @@ export default function Desktop() {
                     SYSTEM RUNNING
                 </div>
             </header>
-
-            <div className="desktop-welcome">
-                <p className="desktop-eyebrow">PERSONAL SPACE // PLAYER 2</p>
-                <h1>Наш маленький всесвіт<span>.</span></h1>
-                <p>Тут зберігається дещо особливе.</p>
-            </div>
 
             <div className="desktop-app-grid">
                 {apps.map((app, index) => {
