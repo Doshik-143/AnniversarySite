@@ -98,11 +98,58 @@ export default function Desktop() {
 
     const [isShuttingDown, setIsShuttingDown] = useState(false);
 
+    const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
+    const [isCharging, setIsCharging] = useState(false);
+
     const [time, setTime] = useState(() => new Date());
 
     useEffect(() => {
         const timer = window.setInterval(() => setTime(new Date()), 1000);
         return () => window.clearInterval(timer);
+    }, []);
+
+
+    useEffect(() => {
+        let battery: {
+            level: number;
+            charging: boolean;
+            addEventListener: (event: string, callback: () => void) => void;
+            removeEventListener: (event: string, callback: () => void) => void;
+        } | null = null;
+
+        const updateBattery = () => {
+            if (!battery) return;
+
+            setBatteryLevel(Math.round(battery.level * 100));
+            setIsCharging(battery.charging);
+        };
+
+        const getBattery = async () => {
+            try {
+                const batteryNavigator = navigator as Navigator & {
+                    getBattery?: () => Promise<NonNullable<typeof battery>>;
+                };
+
+                if (!batteryNavigator.getBattery) return;
+
+                battery = await batteryNavigator.getBattery();
+                updateBattery();
+
+                battery.addEventListener("levelchange", updateBattery);
+                battery.addEventListener("chargingchange", updateBattery);
+            } catch {
+                setBatteryLevel(null);
+            }
+        };
+
+        void getBattery();
+
+        return () => {
+            if (battery) {
+                battery.removeEventListener("levelchange", updateBattery);
+                battery.removeEventListener("chargingchange", updateBattery);
+            }
+        };
     }, []);
 
     const floatingHearts = Array.from({ length: 24 }, (_, index) => ({
@@ -443,8 +490,29 @@ export default function Desktop() {
                         <span className="notification-dot" />
                     </button>
                     <Wifi size={16} />
-                    <BatteryFull size={17} />
-                    <div className="taskbar-clock">
+                    <span
+                        className="taskbar-battery"
+                        title={
+                            batteryLevel === null
+                                ? "Інформація про батарею недоступна"
+                                : `Заряд батареї: ${batteryLevel}%${isCharging ? " · Заряджається" : ""
+                                }`
+                        }
+                    >
+                        <BatteryFull size={17} />
+                    </span>
+                    <div
+                        className="taskbar-clock"
+                        title={`${time.toLocaleDateString("uk-UA", {
+                            weekday: "long",
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                        })}\n${time.toLocaleTimeString("uk-UA", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        })} (Місцевий час)`}
+                    >
                         <span>
                             {time.toLocaleTimeString("uk-UA", {
                                 hour: "2-digit",

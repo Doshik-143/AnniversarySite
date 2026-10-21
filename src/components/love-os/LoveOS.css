@@ -969,3 +969,14 @@
   background: rgba(255, 112, 189, 0.08);
   cursor: pointer;
 }
+
+.taskbar-battery {
+  display: inline-flex;
+  align-items: center;
+  color: #cbbbd0;
+  cursor: default;
+}
+
+.taskbar-battery:hover {
+  color: #ff83ca;
+}
