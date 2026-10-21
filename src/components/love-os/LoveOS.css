@@ -571,3 +571,67 @@
 .taskbar-app.active {
     box-shadow: inset 0 -2px #ff70bd;
 }
+
+/* LOVE OS CONTEXT MENU */
+
+.context-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: transparent;
+}
+
+.os-context-menu {
+    position: fixed;
+    z-index: 100;
+    width: 190px;
+    padding: 7px;
+    border: 1px solid rgba(255, 112, 189, 0.35);
+    border-radius: 12px;
+    background: rgba(19, 12, 25, 0.97);
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.45),
+        0 0 25px rgba(255, 112, 189, 0.08);
+    backdrop-filter: blur(18px);
+}
+
+.context-menu-title {
+    padding: 9px 10px;
+    overflow: hidden;
+    color: #ff83ca;
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.os-context-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 7px;
+    color: #eaddeb;
+    background: transparent;
+    font-family: inherit;
+    font-size: 11px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.os-context-menu button:hover {
+    color: #ff9bd5;
+    background: rgba(255, 112, 189, 0.12);
+}
+
+.context-menu-divider {
+    height: 1px;
+    margin: 5px 3px;
+    background: rgba(255, 255, 255, 0.09);
+}
+
+.os-context-menu button.context-menu-close:hover {
+    color: #ff829a;
+    background: rgba(255, 75, 110, 0.12);
+}

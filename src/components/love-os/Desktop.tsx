@@ -73,6 +73,12 @@ export default function Desktop() {
     const [windows, setWindows] = useState<AppWindowState[]>([]);
     const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
 
+    const [contextMenu, setContextMenu] = useState<{
+        appId: string;
+        x: number;
+        y: number;
+    } | null>(null);
+
     const [time, setTime] = useState(() => new Date());
 
     useEffect(() => {
@@ -337,8 +343,8 @@ export default function Desktop() {
                             <button
                                 key={window.app.id}
                                 className={`taskbar-app ${activeWindowId === window.app.id && !window.minimized
-                                        ? "active"
-                                        : ""
+                                    ? "active"
+                                    : ""
                                     }`}
                                 onClick={() => {
                                     if (window.minimized || activeWindowId !== window.app.id) {
@@ -346,6 +352,21 @@ export default function Desktop() {
                                     } else {
                                         minimizeWindow(window.app.id);
                                     }
+                                }}
+                                onContextMenu={(event) => {
+                                    event.preventDefault();
+
+                                    setContextMenu({
+                                        appId: window.app.id,
+                                        x: Math.max(
+                                            8,
+                                            Math.min(event.clientX, globalThis.innerWidth - 198)
+                                        ),
+                                        y: Math.max(
+                                            8,
+                                            Math.min(event.clientY, globalThis.innerHeight - 188)
+                                        ),
+                                    });
                                 }}
                                 title={window.app.name}
                             >
@@ -374,7 +395,99 @@ export default function Desktop() {
                         </span>
                     </div>
                 </div>
-            </footer>
+            </footer><AnimatePresence>
+                {contextMenu && (
+                    <>
+                        <motion.div
+                            className="context-menu-backdrop"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setContextMenu(null)}
+                            onContextMenu={(event) => {
+                                event.preventDefault();
+                                setContextMenu(null);
+                            }}
+                        />
+
+                        <motion.div
+                            className="os-context-menu"
+                            style={{
+                                left: contextMenu.x,
+                                top: contextMenu.y,
+                            }}
+                            initial={{ opacity: 0, scale: 0.95, y: 5 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 5 }}
+                        >
+                            {(() => {
+                                const target = windows.find(
+                                    (item) => item.app.id === contextMenu.appId
+                                );
+
+                                if (!target) return null;
+
+                                return (
+                                    <>
+                                        <div className="context-menu-title">
+                                            {target.app.name}
+                                        </div>
+
+                                        <button
+                                            onClick={() => {
+                                                restoreWindow(target.app.id);
+                                                setContextMenu(null);
+                                            }}
+                                        >
+                                            <FolderHeart size={15} />
+                                            Відкрити / Відновити
+                                        </button>
+
+                                        {!target.minimized && (
+                                            <>
+                                                <button
+                                                    onClick={() => {
+                                                        minimizeWindow(target.app.id);
+                                                        setContextMenu(null);
+                                                    }}
+                                                >
+                                                    <Minus size={15} />
+                                                    Згорнути
+                                                </button>
+
+                                                <button
+                                                    onClick={() => {
+                                                        toggleMaximize(target.app.id);
+                                                        setContextMenu(null);
+                                                    }}
+                                                >
+                                                    <Maximize2 size={15} />
+                                                    {target.maximized
+                                                        ? "Відновити розмір"
+                                                        : "Розгорнути"}
+                                                </button>
+                                            </>
+                                        )}
+
+                                        <div className="context-menu-divider" />
+
+                                        <button
+                                            className="context-menu-close"
+                                            onClick={() => {
+                                                closeWindow(target.app.id);
+                                                setContextMenu(null);
+                                            }}
+                                        >
+                                            <X size={15} />
+                                            Закрити вікно
+                                        </button>
+                                    </>
+                                );
+                            })()}
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
