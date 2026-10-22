@@ -66,6 +66,12 @@ function Galaxy() {
 
         groupRef.current.rotation.x = rotation.current.x;
         groupRef.current.rotation.y = rotation.current.y;
+
+        groupRef.current.children.forEach((child) => {
+            if (child.userData.orbitParticles) {
+                child.rotation.y += delta * 0.035;
+            }
+        });
     });
 
     useMemo(() => {
@@ -137,6 +143,7 @@ function Galaxy() {
 
     return (
         <group ref={groupRef} rotation={[0.15, 0, 0]}>
+            <GalaxyDust />
             <points>
                 <bufferGeometry>
                     <bufferAttribute
@@ -181,6 +188,77 @@ function Galaxy() {
     );
 }
 
+function GalaxyDust() {
+    const groupRef = useRef<THREE.Group>(null);
+
+    const { positions, colors } = useMemo(() => {
+        const count = 2200;
+        const positions = new Float32Array(count * 3);
+        const colors = new Float32Array(count * 3);
+
+        const palette = [
+            new THREE.Color("#ff70bd"),
+            new THREE.Color("#c084fc"),
+            new THREE.Color("#fff1fb"),
+        ];
+
+        for (let i = 0; i < count; i++) {
+            const radius = 0.8 + Math.sqrt(Math.random()) * 4.6;
+            const arm = Math.floor(Math.random() * 4);
+            const angle =
+                radius * 1.15 +
+                (arm * Math.PI * 2) / 4 +
+                (Math.random() - 0.5) * 0.55;
+
+            positions[i * 3] = Math.cos(angle) * radius;
+            positions[i * 3 + 1] =
+                (Math.random() - 0.5) * (0.1 + radius * 0.055);
+            positions[i * 3 + 2] = Math.sin(angle) * radius;
+
+            const color =
+                palette[Math.floor(Math.random() * palette.length)];
+
+            colors[i * 3] = color.r;
+            colors[i * 3 + 1] = color.g;
+            colors[i * 3 + 2] = color.b;
+        }
+
+        return { positions, colors };
+    }, []);
+
+    useFrame((_, delta) => {
+        if (!groupRef.current) return;
+
+        groupRef.current.rotation.y += delta * 0.045;
+    });
+
+    return (
+        <group ref={groupRef}>
+            <points>
+                <bufferGeometry>
+                    <bufferAttribute
+                        attach="attributes-position"
+                        args={[positions, 3]}
+                    />
+                    <bufferAttribute
+                        attach="attributes-color"
+                        args={[colors, 3]}
+                    />
+                </bufferGeometry>
+
+                <pointsMaterial
+                    size={0.045}
+                    vertexColors
+                    transparent
+                    opacity={0.7}
+                    sizeAttenuation
+                    depthWrite={false}
+                    blending={THREE.AdditiveBlending}
+                />
+            </points>
+        </group>
+    );
+}
 
 function OrbitalParticleRing({
     radius,
@@ -197,7 +275,7 @@ function OrbitalParticleRing({
 }) {
     const groupRef = useRef<THREE.Group>(null);
 
-    const { positions, colors, sizes } = useMemo(() => {
+    const { positions, colors } = useMemo(() => {
         const positions = new Float32Array(count * 3);
         const colors = new Float32Array(count * 3);
         const sizes = new Float32Array(count);
@@ -631,7 +709,6 @@ function ShootingStar() {
 
     return (
         <group ref={groupRef} visible>
-            {/* Яскрава голівка */}
             <mesh>
                 <sphereGeometry args={[0.045, 8, 8]} />
                 <meshBasicMaterial
@@ -643,7 +720,6 @@ function ShootingStar() {
                 />
             </mesh>
 
-            {/* Довгий світний хвіст */}
             <mesh position={[0, -0.4, 0]}>
                 <cylinderGeometry
                     args={[0.002, 0.025, 0.8, 8, 1, true]}
