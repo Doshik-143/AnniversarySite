@@ -175,7 +175,59 @@ function Galaxy() {
                 intensity={12}
                 distance={7}
             />
+            <MemoryPhoto />
         </group>
+    );
+}
+
+function MemoryPhoto() {
+    const memories = useMemo(
+        () => [
+            { src: "/images/universe/memory-01.jpg", angle: 0.2, radius: 3.2, y: 0.5 },
+            { src: "/images/universe/memory-02.jpg", angle: 0.8, radius: 4.5, y: -0.2 },
+            { src: "/images/universe/memory-03.jpg", angle: 1.5, radius: 2.7, y: 0.3 },
+            { src: "/images/universe/memory-04.jpg", angle: 2.1, radius: 4.8, y: 0.1 },
+            { src: "/images/universe/memory-05.jpg", angle: 2.7, radius: 3.5, y: -0.4 },
+            { src: "/images/universe/memory-06.jpg", angle: 3.3, radius: 4.2, y: 0.4 },
+            { src: "/images/universe/memory-07.jpg", angle: 3.9, radius: 2.9, y: -0.2 },
+            { src: "/images/universe/memory-08.jpg", angle: 4.5, radius: 5.0, y: 0.2 },
+            { src: "/images/universe/memory-09.jpg", angle: 5.2, radius: 3.7, y: 0.5 },
+            { src: "/images/universe/memory-10.jpg", angle: 5.8, radius: 4.4, y: -0.3 },
+        ],
+        []
+    );
+
+    const textures = useMemo(() => {
+        const loader = new THREE.TextureLoader();
+
+        return memories.map((memory) =>
+            loader.load(memory.src)
+        );
+    }, [memories]);
+
+    return (
+        <>
+            {memories.map((memory, index) => (
+                <group
+                    key={memory.src}
+                    position={[
+                        Math.cos(memory.angle) * memory.radius,
+                        memory.y,
+                        Math.sin(memory.angle) * memory.radius,
+                    ]}
+                >
+                    <mesh>
+                        <planeGeometry args={[0.75, 1]} />
+                        <meshBasicMaterial
+                            map={textures[index]}
+                            side={THREE.DoubleSide}
+                            transparent
+                            opacity={0.95}
+                        />
+                    </mesh>
+                </group>
+            ))}
+        </>
     );
 }
 
