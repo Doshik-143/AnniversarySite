@@ -381,6 +381,32 @@ function OrbitalRings() {
     );
 }
 
+function BillboardPhoto({
+    position,
+    children,
+}: {
+    position: [number, number, number];
+    children: React.ReactNode;
+}) {
+    const groupRef = useRef<THREE.Group>(null);
+    const { camera } = useThree();
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+
+        const worldPosition = new THREE.Vector3();
+        groupRef.current.getWorldPosition(worldPosition);
+
+        groupRef.current.lookAt(camera.position);
+    });
+
+    return (
+        <group ref={groupRef} position={position}>
+            {children}
+        </group>
+    );
+}
+
 function MemoryPhoto() {
     const { camera } = useThree();
 
@@ -472,7 +498,7 @@ function MemoryPhoto() {
     return (
         <>
             {memories.map((memory, index) => (
-                <group
+                <BillboardPhoto
                     key={memory.src}
                     position={[
                         Math.cos(memory.angle) * memory.radius,
@@ -523,7 +549,7 @@ function MemoryPhoto() {
                             blending={THREE.AdditiveBlending}
                         />
                     </mesh>
-                </group>
+                </BillboardPhoto>
             ))}
         </>
     );
