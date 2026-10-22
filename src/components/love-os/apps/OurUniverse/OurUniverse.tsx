@@ -181,6 +181,9 @@ function Galaxy() {
 }
 
 function MemoryPhoto() {
+    const { camera } = useThree();
+    const materials = useRef<(THREE.MeshBasicMaterial | null)[]>([]);
+
     const memories = useMemo(
         () => [
             { src: "/images/universe/memory-01.jpg", angle: 0.2, radius: 3.2, y: 0.5 },
@@ -205,6 +208,27 @@ function MemoryPhoto() {
         );
     }, [memories]);
 
+    useFrame((_, delta) => {
+        const distance = camera.position.length();
+
+        const targetOpacity = THREE.MathUtils.clamp(
+            (13 - distance) / 7,
+            0.05,
+            0.95
+        );
+
+        materials.current.forEach((material) => {
+            if (!material) return;
+
+            material.opacity = THREE.MathUtils.damp(
+                material.opacity,
+                targetOpacity,
+                4,
+                delta
+            );
+        });
+    });
+
     return (
         <>
             {memories.map((memory, index) => (
@@ -219,10 +243,14 @@ function MemoryPhoto() {
                     <mesh>
                         <planeGeometry args={[0.75, 1]} />
                         <meshBasicMaterial
+                            ref={(material) => {
+                                materials.current[index] = material;
+                            }}
                             map={textures[index]}
                             side={THREE.DoubleSide}
                             transparent
-                            opacity={0.95}
+                            opacity={0.05}
+                            depthWrite={false}
                         />
                     </mesh>
                 </group>
