@@ -175,11 +175,133 @@ function Galaxy() {
                 intensity={12}
                 distance={7}
             />
+            <OrbitalRings />
             <MemoryPhoto />
         </group>
     );
 }
 
+
+function OrbitalParticleRing({
+    radius,
+    color,
+    count,
+    speed,
+    tilt,
+}: {
+    radius: number;
+    color: string;
+    count: number;
+    speed: number;
+    tilt: number;
+}) {
+    const groupRef = useRef<THREE.Group>(null);
+
+    const { positions, colors, sizes } = useMemo(() => {
+        const positions = new Float32Array(count * 3);
+        const colors = new Float32Array(count * 3);
+        const sizes = new Float32Array(count);
+
+        const baseColor = new THREE.Color(color);
+        const white = new THREE.Color("#fff1fb");
+
+        for (let i = 0; i < count; i++) {
+            const angle = (i / count) * Math.PI * 2;
+            const r = radius + (Math.random() - 0.5) * 0.22;
+
+            positions[i * 3] = Math.cos(angle) * r;
+            positions[i * 3 + 1] =
+                (Math.random() - 0.5) * 0.16;
+            positions[i * 3 + 2] = Math.sin(angle) * r;
+
+            const mix = Math.random() * 0.65;
+            const particleColor = baseColor.clone().lerp(white, mix);
+
+            colors[i * 3] = particleColor.r;
+            colors[i * 3 + 1] = particleColor.g;
+            colors[i * 3 + 2] = particleColor.b;
+
+            sizes[i] = 0.025 + Math.random() * 0.035;
+        }
+
+        return { positions, colors, sizes };
+    }, [count, radius, color]);
+
+    useFrame((_, delta) => {
+        if (!groupRef.current) return;
+
+        groupRef.current.rotation.y += speed * delta;
+    });
+
+    return (
+        <group
+            ref={groupRef}
+            rotation={[tilt, 0, 0]}
+        >
+            <points>
+                <bufferGeometry>
+                    <bufferAttribute
+                        attach="attributes-position"
+                        args={[positions, 3]}
+                    />
+                    <bufferAttribute
+                        attach="attributes-color"
+                        args={[colors, 3]}
+                    />
+                </bufferGeometry>
+
+                <pointsMaterial
+                    color="#ffffff"
+                    vertexColors
+                    size={0.04}
+                    transparent
+                    opacity={0.85}
+                    sizeAttenuation
+                    depthWrite={false}
+                    blending={THREE.AdditiveBlending}
+                />
+            </points>
+        </group>
+    );
+}
+
+function OrbitalRings() {
+    return (
+        <group>
+            <OrbitalParticleRing
+                radius={2.9}
+                color="#ff70bd"
+                count={180}
+                speed={0.12}
+                tilt={0.08}
+            />
+
+            <OrbitalParticleRing
+                radius={3.7}
+                color="#c084fc"
+                count={240}
+                speed={-0.08}
+                tilt={-0.06}
+            />
+
+            <OrbitalParticleRing
+                radius={4.4}
+                color="#ff9de2"
+                count={280}
+                speed={0.06}
+                tilt={0.12}
+            />
+
+            <OrbitalParticleRing
+                radius={5.0}
+                color="#a78bfa"
+                count={320}
+                speed={-0.045}
+                tilt={-0.1}
+            />
+        </group>
+    );
+}
 
 function MemoryPhoto() {
     const { camera } = useThree();
