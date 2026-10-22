@@ -180,9 +180,21 @@ function Galaxy() {
     );
 }
 
+
 function MemoryPhoto() {
     const { camera } = useThree();
-    const materials = useRef<(THREE.MeshBasicMaterial | null)[]>([]);
+
+    const photoMaterials = useRef<
+        (THREE.MeshBasicMaterial | null)[]
+    >([]);
+
+    const starMaterials = useRef<
+        (THREE.MeshBasicMaterial | null)[]
+    >([]);
+
+    const haloMaterials = useRef<
+        (THREE.MeshBasicMaterial | null)[][]
+    >([]);
 
     const memories = useMemo(
         () => [
@@ -211,21 +223,49 @@ function MemoryPhoto() {
     useFrame((_, delta) => {
         const distance = camera.position.length();
 
-        const targetOpacity = THREE.MathUtils.clamp(
+        const photoOpacity = THREE.MathUtils.clamp(
             (13 - distance) / 7,
             0.05,
             0.95
         );
 
-        materials.current.forEach((material) => {
+        const starOpacity = 1 - photoOpacity;
+
+        photoMaterials.current.forEach((material) => {
             if (!material) return;
 
             material.opacity = THREE.MathUtils.damp(
                 material.opacity,
-                targetOpacity,
+                photoOpacity,
                 4,
                 delta
             );
+        });
+
+        starMaterials.current.forEach((material) => {
+            if (!material) return;
+
+            material.opacity = THREE.MathUtils.damp(
+                material.opacity,
+                starOpacity,
+                4,
+                delta
+            );
+        });
+
+        haloMaterials.current.forEach((materials) => {
+            materials.forEach((material, haloIndex) => {
+                if (!material) return;
+
+                const baseOpacity = haloIndex === 0 ? 0.08 : 0.22;
+
+                material.opacity = THREE.MathUtils.damp(
+                    material.opacity,
+                    starOpacity * baseOpacity,
+                    4,
+                    delta
+                );
+            });
         });
     });
 
@@ -244,13 +284,43 @@ function MemoryPhoto() {
                         <planeGeometry args={[0.75, 1]} />
                         <meshBasicMaterial
                             ref={(material) => {
-                                materials.current[index] = material;
+                                photoMaterials.current[index] = material;
                             }}
                             map={textures[index]}
                             side={THREE.DoubleSide}
                             transparent
                             opacity={0.05}
                             depthWrite={false}
+                        />
+                    </mesh>
+
+                    <mesh position={[0, 0, -0.02]}>
+                        <sphereGeometry args={[0.22, 16, 16]} />
+                        <meshBasicMaterial
+                            ref={(material) => {
+                                haloMaterials.current[index] ??= [];
+                                haloMaterials.current[index][0] = material;
+                            }}
+                            color="#fff1fb"
+                            transparent
+                            opacity={0.08}
+                            depthWrite={false}
+                            blending={THREE.AdditiveBlending}
+                        />
+                    </mesh>
+
+                    <mesh position={[0, 0, 0]}>
+                        <sphereGeometry args={[0.12, 16, 16]} />
+                        <meshBasicMaterial
+                            ref={(material) => {
+                                haloMaterials.current[index] ??= [];
+                                haloMaterials.current[index][0] = material;
+                            }}
+                            color="#ff70bd"
+                            transparent
+                            opacity={0.22}
+                            depthWrite={false}
+                            blending={THREE.AdditiveBlending}
                         />
                     </mesh>
                 </group>
