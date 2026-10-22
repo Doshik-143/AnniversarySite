@@ -343,8 +343,65 @@ function Stars() {
         return values;
     }, []);
 
+    const starsRef = useRef<THREE.Points>(null);
+
+    const twinkleData = useMemo(() => {
+        const count = positions.length / 3;
+        const phases = new Float32Array(count);
+        const speeds = new Float32Array(count);
+
+        for (let i = 0; i < count; i++) {
+            phases[i] = Math.random() * Math.PI * 2;
+            speeds[i] = 0.7 + Math.random() * 2.3;
+        }
+
+        return { phases, speeds };
+    }, [positions]);
+
+    useFrame(({ clock }) => {
+        if (!starsRef.current) return;
+
+        const material = starsRef.current.material as THREE.PointsMaterial;
+        const time = clock.elapsedTime;
+
+        const colors = starsRef.current.geometry.attributes.color;
+
+        if (!colors) {
+            const count = twinkleData.phases.length;
+            const values = new Float32Array(count * 3);
+
+            for (let i = 0; i < count; i++) {
+                values[i * 3] = 1;
+                values[i * 3 + 1] = 1;
+                values[i * 3 + 2] = 1;
+            }
+
+            starsRef.current.geometry.setAttribute(
+                "color",
+                new THREE.BufferAttribute(values, 3)
+            );
+        }
+
+        const colorAttribute = starsRef.current.geometry.attributes.color;
+
+        for (let i = 0; i < twinkleData.phases.length; i++) {
+            const glow =
+                0.12 +
+                (Math.sin(
+                    time * twinkleData.speeds[i] + twinkleData.phases[i]
+                ) + 1) * 0.44;
+
+            colorAttribute.setXYZ(i, glow, glow, glow);
+        }
+
+        colorAttribute.needsUpdate = true;
+
+        material.opacity = 1;
+        material.vertexColors = true;
+    });
+
     return (
-        <points>
+        <points ref={starsRef}>
             <bufferGeometry>
                 <bufferAttribute
                     attach="attributes-position"
@@ -356,10 +413,131 @@ function Stars() {
                 color="#fff4ff"
                 size={0.025}
                 transparent
-                opacity={0.75}
+                opacity={1}
                 sizeAttenuation
+                vertexColors
             />
         </points>
+    );
+}
+
+
+function ShootingStar() {
+    const groupRef = useRef<THREE.Group>(null);
+    const headMaterial = useRef<THREE.MeshBasicMaterial>(null);
+    const trailMaterial = useRef<THREE.MeshBasicMaterial>(null);
+
+    const flight = useRef({
+        active: false,
+        elapsed: 0,
+        duration: 0.8,
+        nextLaunch: 2 + Math.random() * 3,
+        start: new THREE.Vector3(),
+        end: new THREE.Vector3(),
+        direction: new THREE.Vector3(),
+    });
+
+    useFrame((_, delta) => {
+        const star = flight.current;
+        const group = groupRef.current;
+
+        if (!group) return;
+
+        if (!star.active) {
+            star.nextLaunch -= delta;
+
+            if (star.nextLaunch > 0) return;
+
+            star.active = true;
+            star.elapsed = 0;
+            star.duration = 0.55 + Math.random() * 0.5;
+
+            star.start.set(
+                (Math.random() - 0.5) * 24,
+                3 + Math.random() * 8,
+                -3 - Math.random() * 12
+            );
+
+            star.end.set(
+                star.start.x - (3 + Math.random() * 5),
+                star.start.y - (2 + Math.random() * 4),
+                star.start.z
+            );
+
+            star.direction
+                .subVectors(star.end, star.start)
+                .normalize();
+
+            group.quaternion.setFromUnitVectors(
+                new THREE.Vector3(0, 1, 0),
+                star.direction
+            );
+        }
+
+        star.elapsed += delta;
+
+        const progress = Math.min(
+            star.elapsed / star.duration,
+            1
+        );
+
+        group.position.lerpVectors(
+            star.start,
+            star.end,
+            progress
+        );
+
+        const fade = Math.min(
+            progress * 6,
+            (1 - progress) * 6,
+            1
+        );
+
+        if (headMaterial.current) {
+            headMaterial.current.opacity = fade;
+        }
+
+        if (trailMaterial.current) {
+            trailMaterial.current.opacity = fade * 0.75;
+        }
+
+        if (progress >= 1) {
+            star.active = false;
+            star.nextLaunch = 3 + Math.random() * 3;
+        }
+    });
+
+    return (
+        <group ref={groupRef} visible>
+            {/* Яскрава голівка */}
+            <mesh>
+                <sphereGeometry args={[0.045, 8, 8]} />
+                <meshBasicMaterial
+                    ref={headMaterial}
+                    color="#ffffff"
+                    transparent
+                    opacity={0}
+                    toneMapped={false}
+                />
+            </mesh>
+
+            {/* Довгий світний хвіст */}
+            <mesh position={[0, -0.4, 0]}>
+                <cylinderGeometry
+                    args={[0.002, 0.025, 0.8, 8, 1, true]}
+                />
+                <meshBasicMaterial
+                    ref={trailMaterial}
+                    color="#ffb7ec"
+                    transparent
+                    opacity={0}
+                    side={THREE.DoubleSide}
+                    blending={THREE.AdditiveBlending}
+                    depthWrite={false}
+                    toneMapped={false}
+                />
+            </mesh>
+        </group>
     );
 }
 
@@ -376,6 +554,7 @@ export default function OurUniverse() {
                     <ambientLight intensity={0.8} />
                     <Galaxy />
                     <Stars />
+                    <ShootingStar />
                 </Canvas>
             </div>
 
