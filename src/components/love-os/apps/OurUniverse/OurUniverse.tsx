@@ -12,7 +12,7 @@ function Galaxy() {
     const previousPointer = useRef({ x: 0, y: 0 });
     const { gl } = useThree();
     const { camera } = useThree();
-    const zoom = useRef(9);
+    const zoom = useRef(13);
 
     const { positions, colors } = useMemo(() => {
         const count = 12000;
@@ -546,7 +546,7 @@ export default function OurUniverse() {
         <section className="our-universe">
             <div className="universe-canvas">
                 <Canvas
-                    camera={{ position: [0, 5.5, 9], fov: 48 }}
+                    camera={{ position: [0, 7.93, 13], fov: 48 }}
                     dpr={[1, 1.5]}
                     gl={{ antialias: true, alpha: true }}
                 >
