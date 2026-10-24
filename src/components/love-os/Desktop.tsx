@@ -17,6 +17,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Bell, Power } from "lucide-react";
 import OurUniverse from "./apps/OurUniverse/OurUniverse";
 import { WindowItem } from "./WindowItem";
+import Drop from "./apps/Drop/Drop";
 
 type AppInfo = {
     id: string;
@@ -358,6 +359,8 @@ export default function Desktop() {
                         >
                             {app.id === "our-universe" ? (
                                 <OurUniverse />
+                            ) : app.id === "drop" ? (
+                                <Drop />
                             ) : (
                                 <>
                                     <div className="desktop-window-heart">
